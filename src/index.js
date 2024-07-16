@@ -3,6 +3,7 @@ addEventListener("fetch", (event) => {
   event.respondWith(handleRequest(event.request));
 });
 
+import DOCS from './help.html'
 const dockerHub = "https://registry-1.docker.io";
 
 const routes = {
@@ -16,6 +17,10 @@ const routes = {
   "cloudsmith.hantrends.life.com": "https://docker.cloudsmith.io",
 };
 
+
+
+
+
 function routeByHosts(host) {
   if (host in routes) {
     return routes[host];
@@ -28,6 +33,16 @@ function routeByHosts(host) {
 
 async function handleRequest(request) {
   const url = new URL(request.url);
+  // return docs
+  if (url.pathname === "/") {
+    return new Response(DOCS, {
+      status: 200,
+      headers: {
+        "content-type": "text/html"
+      }
+    });
+  }
+
   const upstream = routeByHosts(url.hostname);
   if (upstream === "") {
     return new Response(
